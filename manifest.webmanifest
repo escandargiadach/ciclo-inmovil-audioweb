@@ -1,0 +1,14 @@
+{
+  "name": "El ciclo inmóvil — Audiolibro",
+  "short_name": "Ciclo inmóvil",
+  "description": "Audiolibro y archivo visual de Los hijos del muro.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090c12",
+  "theme_color": "#090c12",
+  "lang": "es",
+  "icons": [
+    { "src": "assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

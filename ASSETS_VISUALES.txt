@@ -1,0 +1,9 @@
+Reemplaza los SVG provisionales dentro de assets/gallery/ con tus imágenes oficiales.
+
+Recomendación:
+- personajes: vertical 4:5 o 3:4;
+- sellos: PNG transparente cuadrado;
+- infografías: horizontal o vertical, la galería las adapta;
+- portada: vertical, preferiblemente WebP.
+
+Puedes añadir nuevas piezas desde content.js sin tocar el HTML.

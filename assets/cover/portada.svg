@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1700">
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070a0f"/><stop offset=".55" stop-color="#151b24"/><stop offset="1" stop-color="#05070a"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#7c6741"/><stop offset=".5" stop-color="#d1b474"/><stop offset="1" stop-color="#705a37"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#7bc9e8" stop-opacity=".34"/><stop offset="1" stop-color="#7bc9e8" stop-opacity="0"/></radialGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="35"/></filter>
+</defs>
+<rect width="1200" height="1700" fill="url(#bg)"/>
+<circle cx="600" cy="640" r="410" fill="url(#glow)" filter="url(#blur)"/>
+<g opacity=".7" stroke="#8b97a8" stroke-width="3">
+<path d="M90 1180V470L250 290h700l160 180v710" fill="#111720"/>
+<path d="M210 1180V540l110-120h560l110 120v640" fill="#0b1017"/>
+<path d="M360 1180V500M480 1180V440M600 1180V410M720 1180V440M840 1180V500"/>
+<path d="M210 680h780M210 860h780M210 1040h780"/>
+</g>
+<path d="M600 340v910" stroke="#d0e9f3" stroke-opacity=".85" stroke-width="8"/>
+<path d="M600 340v910" stroke="#7bc9e8" stroke-opacity=".28" stroke-width="32" filter="url(#blur)"/>
+<g fill="none" stroke="url(#gold)" stroke-width="5" opacity=".9">
+<circle cx="600" cy="310" r="72"/><path d="M600 226l30 54 62 10-44 44 10 62-58-28-58 28 10-62-44-44 62-10z"/>
+</g>
+<text x="600" y="1280" text-anchor="middle" fill="#d8c59a" font-size="34" letter-spacing="13" font-family="Arial, sans-serif">EL CICLO INMÓVIL</text>
+<text x="600" y="1390" text-anchor="middle" fill="#f2efe8" font-size="82" font-family="Georgia, serif">Los hijos del muro</text>
+<line x1="330" y1="1445" x2="870" y2="1445" stroke="url(#gold)" stroke-width="3"/>
+<text x="600" y="1510" text-anchor="middle" fill="#9ca5b4" font-size="28" letter-spacing="8" font-family="Arial, sans-serif">ESCANDAR GIADACH</text>
+<text x="600" y="1600" text-anchor="middle" fill="#687181" font-size="20" letter-spacing="5" font-family="Arial, sans-serif">PORTADA PROVISIONAL · REEMPLAZAR CON EL ARTE OFICIAL</text>
+</svg>

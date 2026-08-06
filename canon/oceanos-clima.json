@@ -1,0 +1,39 @@
+{
+  "title": "Océanos, clima y ciclo hídrico",
+  "status": "CANON",
+  "version": 1,
+  "updated": "2026-08-03",
+  "summary": "El mundo conserva un océano global activo. El Día Extremo no es completamente seco y la Gran Noche mantiene agua líquida bajo el hielo.",
+  "zones": [
+    {
+      "name": "Día Extremo",
+      "description": "Océano abierto cálido, evaporación intensa, nubosidad reflectante, tormentas y costas húmedas; los interiores son más áridos."
+    },
+    {
+      "name": "Assum",
+      "description": "Franja marítima templada y productiva, con lluvias, ríos, deltas, costas fértiles y las rutas más navegables."
+    },
+    {
+      "name": "Nidum",
+      "description": "La megastructura canaliza los vientos sin sellar la atmósfera; produce nieblas, tormentas, contrastes térmicos y surgencias."
+    },
+    {
+      "name": "Gran Noche",
+      "description": "Transición desde mar nocturno abierto hacia hielo fracturado y casquete grueso, con océano líquido subglacial y polinias."
+    }
+  ],
+  "waterCycle": [
+    "Evaporación en el Día Extremo",
+    "Redistribución por Assum y Nidum",
+    "Nieve y congelación parcial en la Gran Noche",
+    "Retorno mediante glaciares, deshielo, ríos y corrientes profundas"
+  ],
+  "visualRules": [
+    "Las transiciones climáticas son graduales.",
+    "El Día Extremo conserva océanos abiertos.",
+    "La Gran Noche no es una placa uniforme de hielo sólido hasta el fondo.",
+    "Nidum debe representarse como una construcción y no como una cordillera."
+  ],
+  "strategicNote": "El Refugio de la Vigilia puede aprovechar una polinia o sistema geotérmico.",
+  "fullDocument": "canon/oceanos-clima.html"
+}

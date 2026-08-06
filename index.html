@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090c12">
+  <meta name="description" content="Audiolibro y archivo visual de El ciclo inmóvil — Los hijos del muro.">
+  <title>El ciclo inmóvil — Audiolibro</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="embers" aria-hidden="true"></div>
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+  <div id="fxVeil" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ir al inicio">
+      <span class="brand-mark" aria-hidden="true"><img id="brandSeal" src="assets/seals/seal-fulgur.webp" alt=""></span>
+      <span><strong id="brandSaga">El ciclo inmóvil</strong><small>Archivo de audio</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="#escuchar">Escuchar</a>
+      <a href="#archivo">Archivo visual</a>
+      <a href="#mundo">El mundo</a>
+    </nav>
+    <div class="top-actions">
+      <div class="house-switcher" role="group" aria-label="Elegir Casa">
+        <button type="button" data-house="fulgur">Fulgur</button>
+        <button type="button" data-house="gelida">Gélido</button>
+        <button type="button" data-house="assum">Assum</button>
+      </div>
+      <button class="menu-button" id="menuButton" type="button" aria-label="Abrir menú">☰</button>
+    </div>
+  </header>
+
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <button class="mobile-close" id="mobileClose" type="button" aria-label="Cerrar menú">×</button>
+    <a href="#escuchar">Escuchar</a>
+    <a href="#archivo">Archivo visual</a>
+    <a href="#mundo">El mundo</a>
+    <div class="house-switcher mobile-house" role="group" aria-label="Elegir Casa">
+      <button type="button" data-house="fulgur">Fulgur</button>
+      <button type="button" data-house="gelida">Gélido</button>
+      <button type="button" data-house="assum">Assum</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero" id="inicio">
+      <img class="hero-seal" id="heroSeal" src="assets/seals/seal-fulgur.webp" alt="" aria-hidden="true">
+      <div class="hero-copy">
+        <p class="eyebrow" id="partName">Parte I — La vida que le queda</p>
+        <h1><span id="bookName">Los hijos del muro</span></h1>
+        <p class="hero-description" id="siteDescription">Audiolibro y archivo visual interactivo del universo de El ciclo inmóvil.</p>
+        <div class="hero-actions">
+          <button class="primary-button" id="resumeButton" type="button">▶ Comenzar a escuchar</button>
+          <a class="secondary-button" href="#archivo">Explorar el archivo</a>
+        </div>
+        <div class="hero-meta">
+          <span><strong id="chapterCount">8</strong> capítulos</span>
+          <span>Progreso guardado</span>
+          <span>Compatible con teléfono</span>
+        </div>
+      </div>
+      <div class="cover-wrap">
+        <div class="cover-glow"></div>
+        <img id="coverImage" src="assets/cover/portada.webp" alt="Portada de Los hijos del muro">
+      </div>
+    </section>
+
+    <section class="section listening-section" id="escuchar">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Audiolibro</p>
+          <h2>Libro I</h2>
+        </div>
+        <div class="overall-progress-card">
+          <span>Progreso total</span>
+          <strong id="overallPercent">0%</strong>
+          <div class="progress-track"><span id="overallProgress"></span></div>
+        </div>
+      </div>
+
+      <div class="listening-layout">
+        <aside class="now-playing-card">
+          <div class="now-art"><img id="nowCover" src="assets/cover/portada.webp" alt="Portada"></div>
+          <p class="mini-label">Reproduciendo</p>
+          <h3 id="nowTitle">Selecciona un capítulo</h3>
+          <p id="nowPart">Parte I — La vida que le queda</p>
+          <div class="chapter-progress-summary">
+            <span id="elapsedSummary">00:00</span>
+            <span id="durationSummary">--:--</span>
+          </div>
+          <div class="progress-track large"><span id="cardProgress"></span></div>
+          <button class="outline-button" id="offlineButton" type="button">Guardar capítulo sin conexión</button>
+          <p class="small-note" id="offlineNote">Disponible cuando el audio esté alojado en la misma web.</p>
+        </aside>
+
+        <div class="chapter-panel">
+          <div class="chapter-panel-head">
+            <div>
+              <span>Lista de reproducción</span>
+              <strong id="playlistTitle">Partes I y II</strong>
+            </div>
+            <label class="spoiler-toggle">
+              <input type="checkbox" id="spoilerToggle" checked>
+              <span>Proteger spoilers visuales</span>
+            </label>
+          </div>
+          <div class="chapter-list" id="chapterList" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section archive-section" id="archivo">
+      <div class="section-heading archive-heading">
+        <div>
+          <p class="eyebrow">Archivo visual</p>
+          <h2>Sellos, personajes e infografías</h2>
+          <p>Las piezas pueden desbloquearse según tu avance para evitar revelaciones prematuras.</p>
+        </div>
+        <div class="filter-row" id="filterRow" role="group" aria-label="Filtrar archivo"></div>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+    <section class="section atlas-section" id="mundo" aria-labelledby="atlasTitle">
+      <div class="atlas-heading">
+        <div>
+          <p class="eyebrow">Canon del mundo · actualización v8</p>
+          <h2 id="atlasTitle">Un océano entre la noche y el sol.</h2>
+        </div>
+        <p>El mundo no se divide entre un desierto absoluto y una noche congelada. El océano transporta calor alrededor del planeta y sostiene una transición viva entre el Día Extremo, Assum, Nidum y la Gran Noche.</p>
+      </div>
+
+      <div class="atlas-viewer">
+        <div class="atlas-frame">
+          <picture>
+            <source id="worldMapSmall" media="(max-width: 760px)" srcset="assets/world/mundo-realista-final-1024.webp">
+            <img id="worldMapImage" src="assets/world/mundo-realista-final-2048.webp" alt="Mapa realista canónico de El ciclo inmóvil con Gran Noche, Nidum, Assum, Día Extremo, ciudades y puntos estratégicos.">
+          </picture>
+          <div class="atlas-controls" role="group" aria-label="Elegir representación del mundo">
+            <button class="atlas-toggle active" type="button" data-map-view="realista" aria-pressed="true">Vista realista</button>
+            <button class="atlas-toggle" type="button" data-map-view="atlas" aria-pressed="false">Atlas político</button>
+          </div>
+          <span class="atlas-coordinate" aria-hidden="true">GRAN NOCHE · NIDUM · ASSUM · DÍA EXTREMO</span>
+        </div>
+
+        <aside class="ocean-cycle" aria-label="Ciclo global del agua">
+          <p class="mini-label">Ciclo global del agua</p>
+          <ol>
+            <li><b>Evaporación</b><span>El Día Extremo alimenta nubes y tormentas.</span></li>
+            <li><b>Redistribución</b><span>Assum y Nidum trasladan humedad y calor.</span></li>
+            <li><b>Congelación parcial</b><span>La Gran Noche recibe nieve y forma hielo superficial.</span></li>
+            <li><b>Retorno profundo</b><span>Glaciares, ríos y corrientes cierran el ciclo.</span></li>
+          </ol>
+        </aside>
+      </div>
+
+      <div class="climate-zones">
+        <article data-zone="extremo"><span>Día Extremo</span><p>Océano cálido y abierto, evaporación intensa, tormentas y costas húmedas; los interiores son más áridos.</p></article>
+        <article data-zone="assum"><span>Assum</span><p>La franja marítima templada: ríos, deltas, costas fértiles y las rutas más navegables.</p></article>
+        <article data-zone="nidum"><span>Nidum</span><p>La megastructura canaliza los vientos y genera nieblas, contrastes térmicos y surgencias.</p></article>
+        <article data-zone="noche"><span>Gran Noche</span><p>Mar abierto frío, hielo fracturado, polinias y un océano líquido bajo el casquete nocturno.</p></article>
+      </div>
+
+    </section>
+
+    <section class="section world-section" id="expansion">
+      <div class="world-card">
+        <div>
+          <p class="eyebrow">Una obra en expansión</p>
+          <h2>Escucha la historia. Abre el mundo.</h2>
+          <p>Esta web está preparada para crecer con nuevas partes, mapas, casas, personajes, infografías y material adicional sin cambiar el enlace público.</p>
+        </div>
+        <div class="world-stats">
+          <article><strong>08</strong><span>Capítulos activos</span></article>
+          <article><strong>04</strong><span>Tipos de archivo</span></article>
+          <article><strong>∞</strong><span>Expansión futura</span></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong id="footerBook">Los hijos del muro</strong><span>© <span id="year"></span> Escandar Giadach</span></div>
+    <p>Web estática preparada para Netlify.</p>
+  </footer>
+
+  <div class="player-shell" id="playerShell" aria-label="Reproductor de audiolibro">
+    <audio id="audio" preload="metadata"></audio>
+    <div class="player-info">
+      <img src="assets/cover/portada.webp" id="playerCover" alt="">
+      <div><span id="playerChapter">Capítulo</span><strong id="playerTitle">Selecciona un capítulo</strong></div>
+    </div>
+    <div class="player-main">
+      <div class="player-controls">
+        <button type="button" id="previousButton" aria-label="Capítulo anterior"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2.2v14H6z"/><path d="M19.5 5.6v12.8L9.8 12z"/></svg></button>
+        <button type="button" id="backButton" aria-label="Retroceder 10 segundos"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7.4 3.8 5 6.2l2.4 2.4"/><path d="M5 6.2h7.3a6.4 6.4 0 1 1-6.4 6.4"/></g><text x="12.2" y="15.4" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor" font-family="inherit">10</text></svg></button>
+        <button class="play-button" type="button" id="playButton" aria-label="Reproducir"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 5.2v13.6L19.5 12z"/></svg></button>
+        <button type="button" id="forwardButton" aria-label="Avanzar 10 segundos"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16.6 3.8 19 6.2l-2.4 2.4"/><path d="M19 6.2h-7.3a6.4 6.4 0 1 0 6.4 6.4"/></g><text x="11.8" y="15.4" text-anchor="middle" font-size="7" font-weight="800" fill="currentColor" font-family="inherit">10</text></svg></button>
+        <button type="button" id="nextButton" aria-label="Capítulo siguiente"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.8 5h2.2v14h-2.2z"/><path d="M4.5 5.6v12.8L14.2 12z"/></svg></button>
+      </div>
+      <div class="timeline-row">
+        <span id="currentTime">00:00</span>
+        <input id="timeline" type="range" min="0" max="100" value="0" step="0.1" aria-label="Progreso del capítulo">
+        <span id="duration">--:--</span>
+      </div>
+    </div>
+    <div class="player-options">
+      <label>Velocidad
+        <select id="speedSelect" aria-label="Velocidad de reproducción">
+          <option value="0.75">0.75×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.25">1.25×</option>
+          <option value="1.5">1.5×</option>
+          <option value="1.75">1.75×</option>
+          <option value="2">2×</option>
+        </select>
+      </label>
+      <button type="button" id="muteButton" aria-label="Silenciar"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9.3v5.4h3.3L12 18.9V5.1L7.3 9.3z"/><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M14.8 9.3a3.9 3.9 0 0 1 0 5.4"/><path d="M17.3 6.9a7.3 7.3 0 0 1 0 10.2"/></g></svg></button>
+    </div>
+  </div>
+
+  <dialog class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Cerrar">×</button>
+    <img id="lightboxImage" alt="">
+    <div><span id="lightboxCategory"></span><h3 id="lightboxTitle"></h3><p id="lightboxCaption"></p></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="content.js"></script>
+  <script src="fx.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
