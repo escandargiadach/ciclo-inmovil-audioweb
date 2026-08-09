@@ -131,12 +131,18 @@ body.light .cover-badge{background:rgba(249,246,240,.9)}
 .chapter-panel-head span{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.chapter-panel-head strong{display:block;margin-top:4px;font:500 22px/1 Georgia,serif}
 .spoiler-toggle{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;cursor:pointer}.spoiler-toggle input{accent-color:var(--accent)}
 .chapter-list{display:flex;flex-direction:column}
-.chapter-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:15px;align-items:center;padding:17px 20px;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;transition:.15s ease}
-.chapter-item:last-child{border-bottom:0}.chapter-item:hover{background:var(--panel-2)}.chapter-item.active{background:var(--accent-soft)}
+.chapter-item-wrap{display:flex;align-items:center;border-bottom:1px solid var(--line)}
+.chapter-item-wrap:last-child{border-bottom:0}
+.chapter-item{flex:1;min-width:0;display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:15px;align-items:center;padding:17px 20px;border:0;background:transparent;text-align:left;cursor:pointer;transition:.15s ease}
+.chapter-item:hover{background:var(--panel-2)}.chapter-item.active{background:var(--accent-soft)}
 .chapter-number{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;color:var(--accent);font:600 14px/1 Georgia,serif}
 .chapter-copy strong{display:block;font:500 19px/1.2 Georgia,serif}.chapter-copy span{display:block;margin-top:6px;color:var(--muted);font-size:11px}
 .chapter-state{min-width:74px;text-align:right}.chapter-state strong{display:block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}.chapter-state .mini-progress{width:72px;height:3px;margin-top:7px;border-radius:999px;background:rgba(127,138,154,.19);overflow:hidden}.chapter-state .mini-progress span{display:block;height:100%;background:var(--accent)}
 .chapter-item.unavailable .chapter-copy span{color:var(--danger)}
+.chapter-done-toggle{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;margin-right:18px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;transition:.15s ease}
+.chapter-done-toggle svg{width:16px;height:16px}
+.chapter-done-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.chapter-done-toggle.done{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 
 .archive-section{border-top:1px solid var(--line)}
 .archive-heading{align-items:flex-start}.filter-row{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:520px}

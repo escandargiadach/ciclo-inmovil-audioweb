@@ -181,6 +181,11 @@
       group.items.forEach(index => {
         const chapter = data.chapters[index];
         const progress = getChapterProgress(index);
+        const isDone = !!state.completed[index];
+
+        const wrap = document.createElement("div");
+        wrap.className = "chapter-item-wrap";
+
         const button = document.createElement("button");
         button.type = "button";
         button.dataset.index = index;
@@ -196,7 +201,21 @@
             <span class="mini-progress"><span style="width:${progress * 100}%"></span></span>
           </span>`;
         button.addEventListener("click", () => selectChapter(index, true));
-        elements.chapterList.appendChild(button);
+
+        const doneToggle = document.createElement("button");
+        doneToggle.type = "button";
+        doneToggle.className = `chapter-done-toggle${isDone ? " done" : ""}`;
+        doneToggle.setAttribute("aria-pressed", String(isDone));
+        doneToggle.title = isDone ? "Marcado como terminado" : "Marcar como terminado";
+        doneToggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6"/></svg>';
+        doneToggle.addEventListener("click", event => {
+          event.stopPropagation();
+          toggleChapterDone(index);
+        });
+
+        wrap.appendChild(button);
+        wrap.appendChild(doneToggle);
+        elements.chapterList.appendChild(wrap);
       });
     });
   }
@@ -359,6 +378,14 @@
       if (percent) percent.textContent = `${Math.round(progress * 100)}%`;
       if (bar) bar.style.width = `${progress * 100}%`;
     });
+  }
+
+  function toggleChapterDone(index) {
+    state.completed[index] = !state.completed[index];
+    saveState();
+    updateOverallProgress();
+    renderChapters();
+    renderGallery();
   }
 
   function onEnded() {
