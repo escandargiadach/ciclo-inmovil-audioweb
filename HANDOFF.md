@@ -25,6 +25,26 @@
   física `parte-3/` en el campo `file` (cosmético, `app.js` solo usa el basename,
   no rompe nada).
 
+**Segunda tanda (2026-08-09, mismo día):**
+- Escandar detectó que el título del cap 2 lo decía la voz del faraón (hombre)
+  aunque todo el capítulo es de Élian -- sonaba a que un narrador ajeno
+  presentaba algo que en realidad cuenta ella. Fix en el generador (no en este
+  repo, ver HANDOFF del pipeline): el título ahora lo dice quien narra esa
+  sección. 10 capítulos regenerados (solo el chunk de título, no el capítulo
+  entero) y re-subidos al Release.
+- `index.html`: "Lista de reproducción / Partes I y II" (quedó de cuando el
+  libro tenía solo 2 partes) -> **"Libro completo"**.
+- Nuevo: botón para **marcar un capítulo como terminado manualmente** en la
+  lista (antes solo se auto-marcaba al escuchar el 90%+ o llegar al final).
+  `toggleChapterDone(index)` en app.js, toggle circular con check a la derecha
+  de cada fila (`.chapter-done-toggle`), estructura de la fila cambiada de
+  `<button>` suelto a `<div class="chapter-item-wrap">` con DOS botones
+  hermanos (seleccionar capítulo + marcar terminado) para no anidar botones
+  (HTML inválido). `stopPropagation()` en el toggle para no disparar la
+  selección del capítulo al click.
+- `sw.js`: bump v32->v33 / v28->v29 (shell cambió de nuevo).
+- Verificado en vivo: "Libro completo" y el toggle presentes tras el deploy.
+
 **Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
 - **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
 - **Netlify** (`https://el-ciclo-inmovil.netlify.app`) bloqueado por `usage_exceeded` (excedió 100GB/mes del free tier cuando el audio de 1.1GB vivía ahí). Cuenta bloquea deploys nuevos también, no solo tráfico. Reset del billing period: `2026-08-07 00:00 -07:00`. Reintentar deploy Netlify después de esa fecha si se quiere recuperar ese dominio (código shell-only ya listo, solo falta publicar).
