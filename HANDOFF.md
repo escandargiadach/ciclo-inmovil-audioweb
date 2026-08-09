@@ -1,15 +1,51 @@
 # HANDOFF — ciclo-inmovil-audioweb
 
-**Estado (2026-07-30): EN VIVO y funcionando.** https://el-ciclo-inmovil.netlify.app
+**Estado (2026-08-09): LIBRO COMPLETO EN VIVO — narración v26 (32/32 capítulos).**
+- Los 32 mp3 se regeneraron con Qwen3-TTS local (voz faraón + voz Élian por
+  sección de POV, ver `C:\Users\escan\OneDrive\Documents\Claude\docs\HANDOFF-audio-libro.md`
+  para el pipeline completo de generación).
+  Reemplazados en el Release `audio-v1` de `escandargiadach/ciclo-inmovil-audio`
+  vía `deploy_audio.py` (borra el asset viejo y sube el nuevo por número de
+  capítulo, uno por uno — script quedó en el scratchpad de la sesión que hizo el
+  deploy, no en este repo).
+- `content.js` actualizado: títulos/archivos de caps 5 ("Lo que la prueba medía"
+  -> "La marca roja"), 12 ("La señal pendiente" -> "La fase pendiente") y 27
+  (archivo `27-la-lanza-de-vahl.mp3` -> `27-la-lanza-de-vhal.mp3`, corrige
+  ortografía) al manuscrito final aprobado.
+- `index.html`: stat estático "08 Capítulos activos" corregido a "32" (el contador
+  de arriba, `#chapterCount`, ya era dinámico -- este de abajo no tenía `id` y
+  quedó pegado en 8 desde que el libro tenía solo la Parte I).
+- `sw.js`: `SHELL_CACHE` v31->v32, `AUDIO_CACHE` v27->v28 (regla del repo: todo
+  cambio a shell/content.js exige bump antes de deploy).
+- Verificado en vivo (2026-08-09): título del cap 5 actualizado, contador en 32,
+  audio del cap 1 reproduce con `readyState=4` sin error desde la URL nueva del
+  Release. `content.js` sirve el contenido nuevo aunque la primera carga del
+  navegador puede pescar cache -- forzar reload si algo se ve viejo.
+- Pendiente: la Parte IV en `content.js`/`app.js` sigue apuntando a la carpeta
+  física `parte-3/` en el campo `file` (cosmético, `app.js` solo usa el basename,
+  no rompe nada).
+
+**Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
+- **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
+- **Netlify** (`https://el-ciclo-inmovil.netlify.app`) bloqueado por `usage_exceeded` (excedió 100GB/mes del free tier cuando el audio de 1.1GB vivía ahí). Cuenta bloquea deploys nuevos también, no solo tráfico. Reset del billing period: `2026-08-07 00:00 -07:00`. Reintentar deploy Netlify después de esa fecha si se quiere recuperar ese dominio (código shell-only ya listo, solo falta publicar).
 
 ## Qué es
-Audioweb PWA del libro "El ciclo inmóvil" (Parte I, 8 capítulos). Estático: `index.html` + `app.js` + `content.js` (datos) + `sw.js` + `audio/parte-1/*.mp3` (~215 MB).
+Audioweb PWA del libro "El ciclo inmóvil" (Partes I–III, 32 capítulos). Estático: `index.html` + `app.js` + `content.js` (datos) + `fx.js` + `sw.js`. **El audio ya NO vive en el repo del sitio** — carpeta local movida a `web/ciclo-inmovil-audioweb-audio-backup/` (backup, no se despliega).
 
-## Deploy
+## Arquitectura de hosting (2026-08-05)
+- **Shell (HTML/CSS/JS, ~5.9MB):** repo `escandargiadach/ciclo-inmovil-audioweb` en GitHub, servido por GitHub Pages (rama `main`, root). Push normal + Pages se reconstruye solo en ~30-60s.
+- **Audio (1.1GB, 32 mp3):** repo `escandargiadach/ciclo-inmovil-audio`, subido como GitHub Release (`tag: audio-v1`), assets planos (sin subcarpetas). `content.js` → `site.audioBaseUrl = "https://github.com/escandargiadach/ciclo-inmovil-audio/releases/download/audio-v1/"`. `app.js` arma la URL con `chapter.file.split("/").pop()` (toma solo el nombre de archivo, ignora `parte-N/`). Verificado: redirect a Azure Blob, soporta `Range` (206 Partial Content) → scrubbing funciona.
+- **Por qué no jsDelivr:** tiene límite duro de 20MB/archivo; 28 de los 32 capítulos lo superan. GitHub Releases no tiene ese límite (usado por proyectos con binarios de GBs).
+- **Deploy del shell:** clonar `ciclo-inmovil-audioweb`, copiar los archivos del folder local, commit, push a `main` (con token en URL solo para el push, luego quitarlo). Pages no necesita comando de "publish" aparte.
+- **Deploy de audio nuevo/reemplazado:** subir asset al Release vía API (`POST https://uploads.github.com/repos/escandargiadach/ciclo-inmovil-audio/releases/{release_id}/assets?name=archivo.mp3` con el mp3 como body binario, header `Content-Type: audio/mpeg`).
+- Token usado tenía scopes de sobra (el usuario generó uno con casi todos los permisos) — para el próximo, pedir solo scope `repo`.
+
+## Deploy Netlify (legado, para cuando se recupere la cuenta)
 - Netlify site id `f2f05d21-0b5b-4894-a7dc-b283f176484a` (nombre `el-ciclo-inmovil`).
 - **Solo por CLI** (CLI ya autenticado): `npx netlify-cli deploy --prod --dir . --site f2f05d21-0b5b-4894-a7dc-b283f176484a`
 - **Nunca Netlify Drop**: descarta los MP3 grandes en silencio (causó los 404 originales).
 - Si `deploy --prod` da `JSONHTTPError: Forbidden`: hacer deploy draft (sin `--prod`), sacar el deploy_id de `api listSiteDeploys`, y publicarlo con `api restoreSiteDeploy --data '{"site_id":"...","deploy_id":"..."}'`. Funcionó 2026-07-31.
+- **Nunca volver a poner el audio pesado dentro del folder que se deploya a Netlify** — eso fue la causa raíz del `usage_exceeded`. El audio vive en GitHub Releases ahora; si se recupera Netlify, debe seguir sirviendo solo el shell liviano.
 
 ## Gotchas resueltas
 - Headers dan `/audio/*` caché 7 días; los 404 viejos quedaron cacheados en navegadores → audio se pide con `?v=2` (app.js:218). Si se reemplazan MP3, subir a `?v=3` y bumpear `SHELL_CACHE`/`AUDIO_CACHE` en sw.js.
