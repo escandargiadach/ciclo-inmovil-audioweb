@@ -1,5 +1,5 @@
-const SHELL_CACHE = "el-ciclo-inmovil-shell-v31";
-const AUDIO_CACHE = "el-ciclo-inmovil-audio-v27";
+const SHELL_CACHE = "el-ciclo-inmovil-shell-v32";
+const AUDIO_CACHE = "el-ciclo-inmovil-audio-v28";
 const SHELL = [
   "./",
   "./index.html",
