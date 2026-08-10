@@ -45,6 +45,29 @@
 - `sw.js`: bump v32->v33 / v28->v29 (shell cambió de nuevo).
 - Verificado en vivo: "Libro completo" y el toggle presentes tras el deploy.
 
+**Tercera tanda (2026-08-09): "audio no encontrado" -- causa raíz encontrada y
+arreglada en el service worker.**
+- Escandar reportó el error dos veces (antes y después del deploy de las
+  correcciones v28). Probé los 32 capítulos en un navegador limpio (sin estado
+  previo) y los 32 cargaron perfecto -- confirma que NO es un problema de
+  archivos faltantes en el Release.
+- Causa real: el fetch handler de `sw.js` para audio hacía
+  `caches.match(request)` ANTES de ir a la red. Si alguna vez se usó "Guardar
+  capítulo sin conexión" (o quedó una respuesta parcial/rota en Cache Storage
+  por cualquier motivo), esa versión cacheada se serviría PARA SIEMPRE, sin
+  importar que el mp3 en el Release se actualizara después -- el bump de
+  `AUDIO_CACHE` en sw.js no limpia entradas dentro de un cache existente, y
+  encima `app.js` usa su PROPIO nombre de cache para offline
+  (`el-ciclo-inmovil-audio-v1`, no sincronizado con el de sw.js -- bug
+  relacionado, más chico, sigue pendiente como tarea aparte).
+- Fix: el handler de audio ahora intenta la RED primero; si responde ok, la
+  cachea (bajo el `AUDIO_CACHE` versionado del propio SW) y la devuelve; solo
+  cae a caché si la red falla de verdad (offline real). Efecto colateral bueno:
+  se autocura solo -- no hace falta que Escandar borre datos del sitio a mano,
+  en cuanto el navegador tome el SW nuevo y el audio cargue una vez por red
+  bien, la entrada vieja/rota queda sobrescrita.
+- `sw.js`: bump v33->v34 / v29->v30. Deployado.
+
 **Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
 - **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
 - **Netlify** (`https://el-ciclo-inmovil.netlify.app`) bloqueado por `usage_exceeded` (excedió 100GB/mes del free tier cuando el audio de 1.1GB vivía ahí). Cuenta bloquea deploys nuevos también, no solo tráfico. Reset del billing period: `2026-08-07 00:00 -07:00`. Reintentar deploy Netlify después de esa fecha si se quiere recuperar ese dominio (código shell-only ya listo, solo falta publicar).
