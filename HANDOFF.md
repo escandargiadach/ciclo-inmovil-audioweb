@@ -77,6 +77,37 @@ arreglada en el service worker.**
   "Guardar sin conexión" sigue funcionando aparte (usa la Cache API directo
   desde `app.js`, no depende de este handler). Bump v34->v35 / v30->v31.
   Pendiente: confirmación de Escandar desde el iPhone real.
+- **Seguía fallando incluso sin el SW interceptando -- causa raíz real: GitHub
+  Releases mismo, no el service worker.** `curl -H "Range: bytes=0-1023"` a un
+  asset del Release mostró `content-type: application/octet-stream` y
+  `content-disposition: attachment` -- GitHub fuerza esto en TODOS los assets
+  de un Release sin importar el `Content-Type` que se mande al subir vía API
+  (viene baked-in en la URL firmada del redirect a Azure Blob, ni siquiera es
+  ajustable). Chrome/Android ignoran eso y reproducen igual adivinando por la
+  extensión; **Safari en iOS se niega**. No es arreglable desde el lado del
+  sitio -- es una limitación de usar GitHub Releases como host de audio
+  streamable.
+  - **Fix real (2026-08-09/10): audio movido a Netlify.** La cuenta de
+    Netlify (bloqueada desde julio por `usage_exceeded`) ya reseteó su
+    billing period; y el audio ahora pesa ~450MB en vez de 1.1GB (bitrate más
+    bajo del re-narrado con Qwen3-TTS), así que vuelve a entrar cómodo.
+    `web\ciclo-inmovil-audioweb\audio\` (32 mp3 flat, copiados de
+    `C:\dev\qwen3-tts\out\capitulos_mp3_site\`) se deployó a Netlify
+    (`npx netlify-cli deploy --prod --dir . --site f2f05d21-...`, funcionó
+    directo esta vez, sin el workaround de `restoreSiteDeploy`). Verificado:
+    Netlify sirve `content-type: audio/mpeg` real, sin `content-disposition`.
+    `content.js`: `audioBaseUrl` -> `https://el-ciclo-inmovil.netlify.app/audio/`.
+    El shell sigue siendo GitHub Pages -- Netlify ahora SOLO sirve `/audio/`.
+    Verificado en vivo (cap 10, reproduce sin error, `readyState=1`
+    `duration=1317s`). El repo `ciclo-inmovil-audio` (GitHub Releases) queda
+    sin usar -- no se borró, por si hace falta volver atrás.
+  - **Ojo con el audio pesado en este folder de ahora en más:** la regla vieja
+    era "nunca pongas audio en la carpeta que se deploya a Netlify" (así se
+    rompió la cuenta la primera vez). Ahora es al revés a propósito: Netlify
+    SÍ debe tener `/audio/`, pero el repo de **GitHub Pages**
+    (`ciclo-inmovil-audioweb`) NUNCA debe recibir esa carpeta -- al copiar
+    archivos al clone de deploy de GitHub Pages, copiar solo los archivos
+    sueltos del shell (`content.js`, `sw.js`, etc.), nunca `audio/` entero.
 
 **Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
 - **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
