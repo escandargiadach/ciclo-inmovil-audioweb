@@ -269,6 +269,7 @@
     const chapter = data.chapters[index];
 
     if (chapter.part) expandedParts.add(chapter.part);
+    state.unavailable[index] = false;
     updateChapterLabels();
     renderChapters();
     updateMediaSession();
@@ -284,7 +285,6 @@
 
     if (initial) return;
 
-    state.unavailable[index] = false;
     const fileName = chapter.file.split("/").pop();
     const url = new URL(data.site.audioBaseUrl + fileName, window.location.href).href;
     elements.audio.pause();
@@ -398,13 +398,19 @@
   }
 
   function onAudioError() {
-    state.unavailable[selectedIndex] = true;
+    // si el audio ya habia cargado metadata (readyState>0), fue una falla de
+    // red transitoria a mitad de reproduccion, no un archivo inexistente --
+    // no lo marques “no encontrado” para siempre por un hiccup pasajero
+    const hadLoaded = elements.audio.readyState > 0;
     pendingAutoplay = false;
+    if (!hadLoaded) {
+      state.unavailable[selectedIndex] = true;
+      const chapter = data.chapters[selectedIndex];
+      showToast(`No se pudo cargar “${chapter.title}”. Revisa tu conexión e intenta de nuevo.`);
+    }
     saveState();
     updatePlayState();
     renderChapters();
-    const chapter = data.chapters[selectedIndex];
-    showToast(`Falta “${chapter.file}”. Colócalo dentro de audio/parte-1/ y vuelve a publicar la web.`);
   }
 
   function seekBy(seconds) {
