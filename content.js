@@ -6,7 +6,7 @@ window.BOOK_DATA = {
     part: "Libro I — Partes I a IV",
     description: "Audiolibro y archivo visual interactivo del universo de El ciclo inmóvil.",
     cover: "assets/cover/portada.webp",
-    audioBaseUrl: "https://github.com/escandargiadach/ciclo-inmovil-audio/releases/download/audio-v1/",
+    audioBaseUrl: "https://el-ciclo-inmovil.netlify.app/audio/",
     enableSpoilerMode: true
   },
   chapters: [
