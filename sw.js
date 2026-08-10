@@ -1,5 +1,5 @@
-const SHELL_CACHE = "el-ciclo-inmovil-shell-v34";
-const AUDIO_CACHE = "el-ciclo-inmovil-audio-v30";
+const SHELL_CACHE = "el-ciclo-inmovil-shell-v35";
+const AUDIO_CACHE = "el-ciclo-inmovil-audio-v31";
 const SHELL = [
   "./",
   "./index.html",
@@ -29,15 +29,11 @@ self.addEventListener("fetch", event => {
   const isAudio = request.destination === "audio" || /\.(mp3|m4a|ogg|wav)$/i.test(url.pathname);
 
   if (isAudio) {
-    event.respondWith(
-      fetch(request).then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(AUDIO_CACHE).then(cache => cache.put(request, copy));
-        }
-        return response;
-      }).catch(() => caches.match(request))
-    );
+    // No interceptar: Safari/iOS maneja mal los redirects + Range requests de
+    // audio cuando pasan por un SW (causaba "audio no encontrado" solo en
+    // iPhone). El audio va directo a la red, sin pasar por el service worker.
+    // El boton "Guardar sin conexion" sigue funcionando aparte (usa la Cache
+    // API directo desde app.js, no depende de este handler).
     return;
   }
 
