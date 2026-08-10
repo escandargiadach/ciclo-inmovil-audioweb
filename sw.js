@@ -1,5 +1,5 @@
-const SHELL_CACHE = "el-ciclo-inmovil-shell-v33";
-const AUDIO_CACHE = "el-ciclo-inmovil-audio-v29";
+const SHELL_CACHE = "el-ciclo-inmovil-shell-v34";
+const AUDIO_CACHE = "el-ciclo-inmovil-audio-v30";
 const SHELL = [
   "./",
   "./index.html",
@@ -29,7 +29,15 @@ self.addEventListener("fetch", event => {
   const isAudio = request.destination === "audio" || /\.(mp3|m4a|ogg|wav)$/i.test(url.pathname);
 
   if (isAudio) {
-    event.respondWith(caches.match(request).then(cached => cached || fetch(request)));
+    event.respondWith(
+      fetch(request).then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(AUDIO_CACHE).then(cache => cache.put(request, copy));
+        }
+        return response;
+      }).catch(() => caches.match(request))
+    );
     return;
   }
 
