@@ -67,6 +67,16 @@ arreglada en el service worker.**
   en cuanto el navegador tome el SW nuevo y el audio cargue una vez por red
   bien, la entrada vieja/rota queda sobrescrita.
 - `sw.js`: bump v33->v34 / v29->v30. Deployado.
+- **Seguía fallando SOLO en iPhone/Safari** (desktop y el navegador emulado con
+  UA Android probaron bien). Causa: Safari en iOS maneja mal los redirects
+  (GitHub Releases -> Azure Blob) y los Range requests de audio cuando pasan
+  por el `fetch` handler de un service worker -- bug conocido de WebKit, no
+  algo arreglable ajustando la estrategia de cache. Fix definitivo: el audio
+  ya NO pasa por el service worker en absoluto (el handler retorna sin
+  `respondWith`, dejando que el navegador lo maneje nativo). El botón
+  "Guardar sin conexión" sigue funcionando aparte (usa la Cache API directo
+  desde `app.js`, no depende de este handler). Bump v34->v35 / v30->v31.
+  Pendiente: confirmación de Escandar desde el iPhone real.
 
 **Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
 - **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
