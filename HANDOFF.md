@@ -108,6 +108,24 @@ arreglada en el service worker.**
     (`ciclo-inmovil-audioweb`) NUNCA debe recibir esa carpeta -- al copiar
     archivos al clone de deploy de GitHub Pages, copiar solo los archivos
     sueltos del shell (`content.js`, `sw.js`, etc.), nunca `audio/` entero.
+- **El "no encontrado" real (2026-08-10): NO era un problema de red ni de
+  archivos, era un bug de `app.js`** -- confirmado con captura de pantalla
+  real del iPhone: el capítulo 13 se veía REPRODUCIENDO en el mini-player
+  (con duración correcta) pero su fila en la lista seguía en rojo
+  "Archivo de audio no encontrado". Dos bugs:
+  1. `selectChapter()` llamaba `renderChapters()` ANTES de limpiar
+     `state.unavailable[index]` -- el capítulo recién seleccionado se
+     renderizaba con el flag viejo, y nada volvía a re-renderizar la lista
+     después de limpiarlo salvo que cargara metadata.
+  2. `onAudioError()` marcaba `unavailable=true` PARA SIEMPRE ante cualquier
+     error, incluido un hiccup de red a mitad de reproducción (típico en
+     datos móviles) -- una vez marcado queda en `localStorage` y nunca se
+     limpia solo salvo que se vuelva a seleccionar ESE capítulo puntual.
+  Fix: mover el clear de `unavailable` antes del render en `selectChapter()`;
+  en `onAudioError()` solo marcar unavailable si `audio.readyState === 0`
+  (nunca llegó a cargar metadata -- ahí sí es un archivo real que falta), no
+  ante cualquier error tardío. Deployado en los dos orígenes (GitHub Pages +
+  Netlify, ambos sirven su propia copia de `app.js`). `sw.js` bump v36->v37.
 
 **Estado (2026-08-05): EN VIVO en GitHub Pages tras caída de Netlify.**
 - **Sitio activo:** https://escandargiadach.github.io/ciclo-inmovil-audioweb/
