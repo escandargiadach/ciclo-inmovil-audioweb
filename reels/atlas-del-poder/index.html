@@ -1,0 +1,244 @@
+<title>Atlas del Poder</title>
+<style>
+/* Una sola cámara sobre el mapa canónico: escenario 9:16 fijo de 1080×1920, escalado a la ventana. */
+:root{
+  --ink:#07090d; --panel:#10141b; --line:#232a35; --txt:#e9e4d6; --muted:#9a937f; --gold:#c9a45a;
+  --display:"Cinzel",Georgia,"Times New Roman",serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+@font-face{font-family:"Cinzel";font-weight:700;src:url(fonts/cinzel-latin-700-normal.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Cinzel";font-weight:900;src:url(fonts/cinzel-latin-900-normal.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Inter";font-weight:500;src:url(fonts/inter-latin-500-normal.woff2) format("woff2");font-display:block}
+@font-face{font-family:"Inter";font-weight:700;src:url(fonts/inter-latin-700-normal.woff2) format("woff2");font-display:block}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--ink);color:var(--txt);font-family:var(--body);padding-inline:16px;padding-block:16px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:14px}
+.shell{width:min(100%,460px);display:flex;flex-direction:column;gap:12px;flex:1;min-height:0}
+.frame{position:relative;width:100%;aspect-ratio:9/16;max-width:100%;max-height:calc(100vh - 150px);margin-inline:auto;overflow:hidden;border-radius:6px;background:#000;box-shadow:0 0 0 1px var(--line)}
+.frame{width:auto;height:min(calc(100vh - 150px), calc((100vw - 32px) * 16 / 9))}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;overflow:hidden;background:#05070a}
+.controls{display:flex;align-items:center;gap:10px;width:100%}
+.controls button{font:700 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:4px;padding:9px 12px;cursor:pointer;min-width:84px}
+.controls button:focus-visible,#scrub:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#scrub{flex:1;min-width:0;accent-color:var(--gold)}
+#tc{font:500 12px/1 var(--body);color:var(--muted);font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+.note{font:500 12px/1.5 var(--body);color:var(--muted);max-width:60ch;text-align:center;margin:0}
+body.export{padding:0;display:block;background:#000}
+body.export .controls,body.export .note{display:none}
+body.export .shell{width:1080px}
+body.export .frame{width:1080px;height:1920px;max-height:none;border-radius:0;box-shadow:none}
+
+/* ---- reel layers ---- */
+#bg{position:absolute;inset:-80px;background:url(assets/mapa-fondo.jpg) center/cover;filter:blur(26px) brightness(.38) saturate(1.1)}
+#world{position:absolute;left:0;top:0;width:1686px;height:1160px;transform-origin:0 0;will-change:transform}
+#world img.map{position:absolute;inset:0;width:1686px;height:1160px;max-width:none;display:block}
+.tint,.tint2{position:absolute;inset:0;-webkit-mask-size:100% 100%;mask-size:100% 100%;opacity:0}
+.tint{mix-blend-mode:multiply}
+.tint2{mix-blend-mode:color}
+.edge{position:absolute;inset:0;width:1686px;height:1160px;max-width:none;opacity:0}
+#shade{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(120% 70% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 100%)}
+#fx{position:absolute;inset:0;width:1080px;height:1920px}
+.rname{position:absolute;left:0;top:0;font:900 170px/1 var(--display);letter-spacing:.04em;color:rgba(255,255,255,.2);white-space:nowrap;transform-origin:50% 50%;opacity:0;text-shadow:0 0 40px rgba(0,0,0,.35)}
+.seal{position:absolute;left:0;top:0;width:190px;height:190px;object-fit:contain;max-width:none;opacity:0;filter:drop-shadow(0 10px 22px rgba(0,0,0,.7))}
+.house{position:absolute;left:0;top:0;width:170px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;transform-origin:50% 85px}
+.house img{width:170px;height:170px;max-width:none;border-radius:50%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.75));display:block}
+.house b{font:700 38px/1 var(--display);letter-spacing:.06em;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.9),0 0 2px #000;white-space:nowrap}
+.house i{font:700 19px/1 var(--body);font-style:normal;letter-spacing:.22em;text-transform:uppercase;color:var(--c,#ddd);text-shadow:0 1px 6px rgba(0,0,0,1);white-space:nowrap}
+.mini{position:absolute;left:0;top:0;width:66px;height:66px;max-width:none;border-radius:50%;opacity:0;filter:drop-shadow(0 6px 10px rgba(0,0,0,.8))}
+.line{position:absolute;left:0;width:1080px;text-align:center;font:900 92px/1.02 var(--display);letter-spacing:.03em;color:#f3ead2;text-shadow:0 6px 30px rgba(0,0,0,.8);opacity:0}
+.kicker{position:absolute;left:0;width:1080px;text-align:center;font:700 24px/1 var(--body);letter-spacing:.42em;text-transform:uppercase;color:var(--gold);opacity:0}
+.small-name{position:absolute;left:0;top:0;font:900 34px/1 var(--display);letter-spacing:.12em;color:rgba(255,255,255,.85);text-shadow:0 2px 10px rgba(0,0,0,.9);opacity:0;white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.controls button{transition:none}}
+</style>
+
+<div class="shell">
+  <div class="frame" id="frame">
+    <div id="stage" aria-label="Reel: Las 14 Casas de Custodia sobre el mapa de El ciclo inmóvil">
+      <div id="bg"></div>
+      <div id="world">
+        <img class="map" src="assets/mapa-limpio.jpg" alt="">
+      </div>
+      <div id="shade"></div>
+      <div id="screen"></div>
+      <canvas id="fx" width="1080" height="1920"></canvas>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="play" type="button">Pausa</button>
+    <input id="scrub" type="range" min="0" max="24" step="0.01" value="0" aria-label="Línea de tiempo">
+    <span id="tc">0.00 s</span>
+  </div>
+  <p class="note">Prototipo · 1080×1920 · mapa canónico limpio y emblemas del Atlas de las 14 Casas. Sin audio: la música va en Instagram.</p>
+</div>
+
+<script>
+(function(){
+// ---------- datos ----------
+var REG=[
+ {id:'gran-noche',name:'GRAN NOCHE',dark:'#2a1670',col:'#6d3cff',glow:'#a98bff',seal:'gelida',
+  t0:2.4,in:4.0,out:7.3,houses:[['korr','Korr','Vanta',202,145],['orsen','Orsen','Dorska',402,227],['veyra','Veyra','Nivara',594,491],['silven','Silven','Puerto Nox',216,659]],
+  hStart:4.45,hGap:.55,np:{x:540,y:1640,rot:0,size:128},sealAt:{x:540,y:1430}},
+ {id:'nidum',name:'NIDUM',dark:'#5a0a16',col:'#d0182f',glow:'#ff6170',seal:'fulgur',
+  t0:7.3,in:8.8,out:13.4,houses:[['aurelian','Aurelian','Aurea',839,158],['veyron','Veyron','Astérion',833,277],['sevrin','Sevrin','Meridia',842,408],['solenne','Solenne','Lunaria',833,547],['corven','Corven','Cendra',843,679],['ordel','Ordel','Nhyra',837,804]],
+  hStart:9.15,hGap:.6,zig:115,np:{x:150,y:960,rot:-90},sealAt:{x:930,y:1720}},
+ {id:'assum',name:'ASSUM',dark:'#6a3306',col:'#ef8a1c',glow:'#ffc06a',seal:'assum',
+  t0:13.4,in:14.9,out:18.2,houses:[['valeris','Valeris','Solaria',1342,182],['helion','Helion','Helaria',1085,364],['sareth','Sareth','Sarethia',1147,666],['ardent','Ardent','Farallón',1464,729]],
+  hStart:15.35,hGap:.55,np:{x:540,y:1640,rot:0},sealAt:{x:540,y:1430}}
+];
+var CAM=[ // t, cx, cy, s
+ [0,843,580,.62],[2.4,843,580,.665],[4.0,420,575,1.75],[7.3,388,566,1.82],
+ [8.8,838,420,2.3],[13.4,838,700,2.3],[14.9,1270,580,1.75],[18.2,1292,572,1.82],
+ [19.8,843,580,.62],[24,843,580,.6]];
+var DUR=24, MAPW=1686, MAPH=1160;
+
+// ---------- utilidades ----------
+function cl(x,a,b){return x<a?a:x>b?b:x}
+function lin(t,a,b){return cl((t-a)/(b-a),0,1)}
+function eio(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2}
+function eout(p){return 1-Math.pow(1-p,3)}
+function eback(p){var c1=1.9,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)}
+function mix(a,b,p){return a+(b-a)*p}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+function cam(t){
+  for(var i=0;i<CAM.length-1;i++){var a=CAM[i],b=CAM[i+1];
+    if(t<=b[0]){var p=eio(lin(t,a[0],b[0]));
+      return {cx:mix(a[1],b[1],p),cy:mix(a[2],b[2],p),s:Math.exp(mix(Math.log(a[3]),Math.log(b[3]),p))}}}
+  var l=CAM[CAM.length-1];return {cx:l[1],cy:l[2],s:l[3]};
+}
+function toScreen(c,x,y){return {x:(x-c.cx)*c.s+540,y:(y-c.cy)*c.s+960}}
+
+// ---------- construir DOM ----------
+var world=document.getElementById('world'), screen=document.getElementById('screen');
+function el(tag,cls,parent){var e=document.createElement(tag);if(cls)e.className=cls;parent.appendChild(e);return e}
+REG.forEach(function(r){
+  var m='url(assets/mask-'+r.id+'.png)';
+  r.tint=el('div','tint',world); r.tint.style.background=r.dark; r.tint.style.webkitMaskImage=m; r.tint.style.maskImage=m;
+  r.tint2=el('div','tint2',world); r.tint2.style.background=r.col; r.tint2.style.webkitMaskImage=m; r.tint2.style.maskImage=m;
+  r.edge=el('img','edge',world); r.edge.src='assets/borde-'+r.id+'.png'; r.edge.alt='';
+  r.edge.style.filter='drop-shadow(0 0 3px #fff) drop-shadow(0 0 10px '+r.glow+') drop-shadow(0 0 22px '+r.glow+')';
+});
+REG.forEach(function(r){
+  r.nameEl=el('div','rname',screen); r.nameEl.textContent=r.name; if(r.np.size) r.nameEl.style.fontSize=r.np.size+'px';
+  r.sealEl=el('img','seal',screen); r.sealEl.src='assets/sello-'+r.seal+'.png'; r.sealEl.alt='';
+  r.small=el('div','small-name',screen); r.small.textContent=r.name;
+  r.els=r.houses.map(function(h){
+    var d=el('div','house',screen); d.style.setProperty('--c',r.glow);
+    var im=el('img','',d); im.src='assets/emb-'+h[0]+'.png'; im.alt='Casa '+h[1];
+    el('b','',d).textContent=h[1].toUpperCase(); el('i','',d).textContent=h[2];
+    var mi=el('img','mini',screen); mi.src=im.src; mi.alt='';
+    return {d:d,mini:mi};
+  });
+});
+function line(txt,y,cls){var e=el('div',cls||'line',screen);e.textContent=txt;e.style.top=y+'px';return e}
+var L1=line('14 CASAS.',250), L2=line('3 TERRITORIOS.',360), L3=line('UN MURO.',470);
+var K1=line('El ciclo inmóvil · Atlas del poder',1420,'kicker');
+var O1=line('EL SOL NO SE MUEVE.',300), O2=line('EL PODER, SÍ.',1500);
+O1.style.fontSize='78px'; O2.style.fontSize='78px';
+
+// ---------- partículas deterministas ----------
+var bursts=[];
+REG.forEach(function(r,ri){r.houses.forEach(function(h,i){bursts.push({t:r.hStart+i*r.hGap+.12,reg:r,h:h,i:i,seed:ri*31+i+7,col:r.glow,n:26,sp:520})})});
+var fx=document.getElementById('fx'), g=fx.getContext('2d');
+function drawFx(t,c){
+  g.clearRect(0,0,1080,1920); g.globalCompositeOperation='lighter';
+  bursts.forEach(function(b){
+    var dt=t-b.t; if(dt<0||dt>.9) return;
+    var p=b.pos; var R=rng(b.seed);
+    for(var k=0;k<b.n;k++){
+      var a=R()*Math.PI*2, v=b.sp*(.35+R()*.75), life=.45+R()*.45; if(dt>life) {R();continue}
+      var q=dt/life, d=v*dt*(1-.45*q);
+      var x=p.x+Math.cos(a)*d, y=p.y+Math.sin(a)*d+220*dt*dt, sz=(1-q)*(2+R()*3.5);
+      g.globalAlpha=(1-q)*.95; g.fillStyle=k%3?b.col:'#fff6d8';
+      g.beginPath(); g.arc(x,y,sz,0,6.283); g.fill();
+    }
+    // anillo de pulso
+    var rq=cl(dt/.6,0,1); g.globalAlpha=(1-rq)*.7; g.strokeStyle=b.col; g.lineWidth=4*(1-rq)+1;
+    g.beginPath(); g.arc(p.x,p.y,85+rq*90,0,6.283); g.stroke();
+  });
+  g.globalAlpha=1; g.globalCompositeOperation='source-over';
+}
+
+// ---------- render(t) ----------
+function slam(e,t,t0,tOut){
+  var p=lin(t,t0,t0+.38), q=tOut?lin(t,tOut,tOut+.35):0;
+  var s=mix(1.7,1,eout(p))*(1-.15*q);
+  e.style.opacity=(cl(p*2.2,0,1)*(1-q)).toFixed(3);
+  e.style.transform='scale('+s.toFixed(4)+')';
+  e.style.filter='blur('+((1-p)*10+q*8).toFixed(2)+'px)';
+}
+function render(t){
+  var c=cam(t);
+  world.style.transform='translate('+(540-c.cx*c.s).toFixed(2)+'px,'+(960-c.cy*c.s).toFixed(2)+'px) scale('+c.s.toFixed(5)+')';
+  // intro
+  slam(L1,t,.25,2.2); slam(L2,t,.7,2.25); slam(L3,t,1.15,2.3);
+  K1.style.opacity=(lin(t,1.3,1.8)*(1-lin(t,2.2,2.6))).toFixed(3);
+  var outro=lin(t,19.0,19.8);
+  REG.forEach(function(r){
+    // tinte de región
+    var a=eout(lin(t,r.in-.6,r.in))*(1-lin(t,r.out+.1,r.out+.9)); a=Math.max(a,outro);
+    r.tint.style.opacity=(a*.5).toFixed(3); r.tint2.style.opacity=(a*.52).toFixed(3);
+    var ea=lin(t,r.in-.35,r.in+.25)*(1-lin(t,r.out+.1,r.out+.9)); ea=Math.max(ea,outro*.85);
+    r.edge.style.opacity=ea.toFixed(3);
+    // nombre gigante con paralaje
+    var np=lin(t,r.in-.2,r.in+.5), nq=lin(t,r.out-.1,r.out+.4), drift=(t-r.in)*14;
+    var nx=r.np.x+(r.np.rot?0:-drift), ny=r.np.y+(r.np.rot?drift:0);
+    r.nameEl.style.opacity=(eout(np)*(1-nq)).toFixed(3);
+    r.nameEl.style.transform='translate(-50%,-50%) translate('+nx.toFixed(1)+'px,'+ny.toFixed(1)+'px) rotate('+r.np.rot+'deg) scale('+mix(1.25,1,eout(np)).toFixed(4)+')';
+    r.nameEl.style.left='0';r.nameEl.style.top='0';
+    // sello regional
+    var sp=lin(t,r.in-.05,r.in+.45), sq=lin(t,r.out-.1,r.out+.3);
+    r.sealEl.style.opacity=(cl(sp*2,0,1)*(1-sq)).toFixed(3);
+    r.sealEl.style.transform='translate('+(r.sealAt.x-95)+'px,'+(r.sealAt.y-95+Math.sin(t*1.6)*6).toFixed(1)+'px) scale('+(eback(sp)*(1-.3*sq)).toFixed(4)+') rotate('+((1-sp)*-25).toFixed(2)+'deg)';
+    // casas
+    r.houses.forEach(function(h,i){
+      var o=r.els[i], ti=r.hStart+i*r.hGap, p=lin(t,ti,ti+.45), q=lin(t,r.out-.15+i*.04,r.out+.3+i*.04);
+      var pos=toScreen(c,h[3],h[4]); if(r.zig) pos.x+=(i%2?1:-1)*r.zig;
+      var bob=Math.sin(t*2.1+i)*4;
+      o.d.style.opacity=(cl(p*2.5,0,1)*(1-q)).toFixed(3);
+      o.d.style.transform='translate('+(pos.x-85).toFixed(1)+'px,'+(pos.y-85+bob).toFixed(1)+'px) perspective(700px) rotateY('+((1-eout(p))*70).toFixed(2)+'deg) scale('+(eback(p)*(1-.35*q)).toFixed(4)+')';
+      o.d.style.filter='blur('+((1-p)*7+q*6).toFixed(2)+'px)';
+      // posición de las partículas (en pantalla, al momento del pop)
+      bursts.forEach(function(b){if(b.reg===r&&b.i===i) b.pos={x:pos.x,y:pos.y}});
+      // mini emblemas del cierre
+      var mp=lin(t,19.85+(REG.indexOf(r)*5+i)*.05,20.25+(REG.indexOf(r)*5+i)*.05);
+      var mpos=toScreen(c,h[3],h[4]);
+      o.mini.style.opacity=cl(mp*2,0,1).toFixed(3);
+      o.mini.style.transform='translate('+(mpos.x-33).toFixed(1)+'px,'+(mpos.y-33).toFixed(1)+'px) scale('+eback(mp).toFixed(4)+')';
+    });
+    // nombre pequeño en el cierre
+    var sn=lin(t,20.4,20.9), ctr=r.id==='gran-noche'?[300,900]:r.id==='nidum'?[880,-55]:[1240,460];
+    var sp2=toScreen(c,ctr[0],ctr[1]);
+    r.small.style.opacity=sn.toFixed(3);
+    r.small.style.transform='translate(-50%,-50%) translate('+sp2.x.toFixed(1)+'px,'+sp2.y.toFixed(1)+'px)';
+  });
+  slam(O1,t,21.0,0); slam(O2,t,21.9,0);
+  drawFx(t,c);
+}
+
+// ---------- reproductor ----------
+var stage=document.getElementById('stage'), frame=document.getElementById('frame');
+var scrub=document.getElementById('scrub'), tc=document.getElementById('tc'), btn=document.getElementById('play');
+scrub.max=DUR;
+var isExport=/[?&]export=1/.test(location.search);
+if(isExport) document.body.classList.add('export');
+function fit(){var w=frame.clientWidth; stage.style.transform=isExport?'none':'scale('+(w/1080)+')'}
+window.addEventListener('resize',fit); fit();
+var T=0, playing=!isExport && !matchMedia('(prefers-reduced-motion: reduce)').matches, last=null;
+if(!playing && !isExport) T=12.2;
+function show(t){T=t; render(t); scrub.value=t; tc.textContent=t.toFixed(2)+' s'}
+function loop(now){
+  if(playing){ if(last!=null){ T+= (now-last)/1000; if(T>DUR) T=0; } last=now; show(T); }
+  else last=null;
+  requestAnimationFrame(loop);
+}
+btn.textContent=playing?'Pausa':'Play';
+btn.onclick=function(){playing=!playing; btn.textContent=playing?'Pausa':'Play'};
+scrub.oninput=function(){playing=false; btn.textContent='Play'; show(parseFloat(scrub.value))};
+window.renderAt=function(t){render(t)};
+window.DUR=DUR;
+show(T);
+if(!isExport) requestAnimationFrame(loop);
+})();
+</script>
